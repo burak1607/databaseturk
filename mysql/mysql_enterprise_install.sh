@@ -1,10 +1,10 @@
 #!/bin/bash
 
 # ╔═════════════════════════════════════════════════════════════════════════╗
-# ║                           MySQL Setup Script                           ║
-# ║                    Developed by burak@nsolidus.com                     ║
-# ║                            Date: 10.11.2024                            ║
-# ║             Install or remove MySQL with elegance and ease             ║
+# ║                           MySQL Setup Script                            ║
+# ║                    Developed by burak@nsolidus.com                      ║
+# ║                            Date: 10.11.2024                             ║
+# ║             Install or remove MySQL with elegance and ease              ║
 # ╚═════════════════════════════════════════════════════════════════════════╝
 
 export DEBIAN_FRONTEND=noninteractive
@@ -31,7 +31,7 @@ echo "2. Remove MySQL Enterprise Edition and related components"
 echo "3. Install MySQL Community Edition (from Ubuntu repo)"
 read -p "Please enter 1, 2, or 3: " choice
 
-# Set non-interactive installation options
+# Non-interactive option for configuration files
 echo mysql-common mysql-common/overwrite_conf boolean true | debconf-set-selections
 apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" update
 
@@ -52,13 +52,13 @@ install_enterprise() {
     # Package installation order
     packages=(
         "mysql-common_8.4.2+commercial-1ubuntu24.04_amd64.deb"
-        "libmysqlclient24_8.4.2+commercial-1ubuntu24.04_amd64.deb"
+        "mysql-commercial-server-core_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-commercial-client-plugins_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-commercial-client-core_8.4.2+commercial-1ubuntu24.04_amd64.deb"
+        "libmysqlclient24_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "libmysqlclient-dev_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-commercial-client_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-client_8.4.2+commercial-1ubuntu24.04_amd64.deb"
-        "mysql-commercial-server-core_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-commercial-server_8.4.2+commercial-1ubuntu24.04_amd64.deb"
         "mysql-server_8.4.2+commercial-1ubuntu24.04_amd64.deb"
     )
@@ -68,7 +68,7 @@ install_enterprise() {
         dpkg -i "$install_dir/$package"
         if [[ $? -ne 0 ]]; then
             echo "Error occurred during $package installation. Attempting to resolve dependencies..."
-            apt-get -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" install -f -y
+            apt-get -f install -y
         fi
     done
 
@@ -90,38 +90,52 @@ remove_enterprise() {
     read -p "Your choice: " confirmation
     [[ "$confirmation" != "Y" && "$confirmation" != "y" ]] && { echo "Aborted."; exit 1; }
 
-    echo "Stopping MySQL service if active..."
-    systemctl stop mysql 2>/dev/null || echo "MySQL service was not running."
+    # Ask if the user wants a full removal
+    echo -e "\nDo you want a full removal of MySQL and all its files? (Y/N)"
+    read -p "Your choice: " full_removal
+    if [[ "$full_removal" == "Y" || "$full_removal" == "y" ]]; then
+        echo "Performing full MySQL removal..."
+        apt remove mysql* -y
+        apt purge mysql* -y
+        rm -rf /var/lib/mysql
+        rm -rf /etc/mysql/
+        rm -rf /usr/lib/mysql/
+        rm -rf /usr/bin/mysql
+        echo "Full MySQL removal complete."
+    else
+        echo "Stopping MySQL service if active..."
+        systemctl stop mysql 2>/dev/null || echo "MySQL service was not running."
 
-    # Removing packages
-    echo "Removing MySQL packages..."
-    packages_to_remove=(
-        "mysql-common"
-        "libmysqlclient24"
-        "mysql-commercial-client-plugins"
-        "mysql-commercial-client-core"
-        "libmysqlclient-dev"
-        "mysql-commercial-client"
-        "mysql-client"
-        "mysql-commercial-server-core"
-        "mysql-commercial-server"
-        "mysql-server"
-    )
-    
-    for pkg in "${packages_to_remove[@]}"; do
-        dpkg -r "$pkg" || echo "$pkg could not be removed."
-    done
+        # Removing packages
+        echo "Removing MySQL packages..."
+        packages_to_remove=(
+            "mysql-common"
+            "libmysqlclient24"
+            "mysql-commercial-client-plugins"
+            "mysql-commercial-client-core"
+            "libmysqlclient-dev"
+            "mysql-commercial-client"
+            "mysql-client"
+            "mysql-commercial-server-core"
+            "mysql-commercial-server"
+            "mysql-server"
+        )
+        
+        for pkg in "${packages_to_remove[@]}"; do
+            dpkg -r "$pkg" || echo "$pkg could not be removed."
+        done
 
-    # Update bashrc to comment out MySQL alias if exists
-    sed -i '/alias mysql=/s/^/#/' ~/.bashrc
-    echo "MySQL alias in .bashrc has been commented out."
+        # Update bashrc to comment out MySQL alias if exists
+        sed -i '/alias mysql=/s/^/#/' ~/.bashrc
+        echo "MySQL alias in .bashrc has been commented out."
 
-    # Retain /var/lib/mysql directory and remove only specific contents
-    echo "Cleaning up additional MySQL-related directories in /var/lib..."
-    rm -rf /var/lib/mysql-keyring /var/lib/mysql-files
+        # Retain /var/lib/mysql directory and remove only specific contents
+        echo "Cleaning up additional MySQL-related directories in /var/lib..."
+        rm -rf /var/lib/mysql-keyring /var/lib/mysql-files
 
-    # Summary
-    echo -e "Removal complete!\nNote: The directory /var/lib/mysql was not removed."
+        # Summary
+        echo -e "Removal complete!\nNote: The directory /var/lib/mysql was not removed."
+    fi
 }
 
 install_community() {
