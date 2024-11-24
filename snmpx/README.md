@@ -24,22 +24,26 @@ SNMPX supports SNMPv1 and SNMPv2c protocols, and processes severity levels such 
 ## Configuration
 SNMPX reads its configuration from /etc/snmpx.conf. Below is an example configuration file:
 
-### Slack Webhook URLs
+### Slack Webhook URLs /etc/snmpx.conf
 ```webhook.default=https://hooks.slack.com/services/your-default-webhook
 webhook.critical=https://hooks.slack.com/services/your-critical-webhook
 webhook.warning=https://hooks.slack.com/services/your-warning-webhook
 webhook.info=https://hooks.slack.com/services/your-info-webhook
-```
-
-### SNMP Community String
-```
 community=publicx
-webhook.default: Used if no severity is specified in the SNMP trap.
-webhook.critical: Webhook for critical severity traps.
-webhook.warning: Webhook for warning severity traps.
-webhook.info: Webhook for info severity traps.
-community: SNMP community string for authentication.
 ```
 
+### Clone & Build
+```
+git clone https://github.com/burak1607/databaseturk.git
+cd databaseturk/snmpx
+go build -o snmpx
+sudo nano /etc/snmpx.conf
+sudo ./snmpx
+```
+
+### Future Enhancements
+ Add support for SNMPv3 with authentication and encryption.
+ Extend integration to other platforms (e.g., email, custom dashboards).
+ Implement richer Slack message formatting (e.g., attachments, color coding).
 
 
