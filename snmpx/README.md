@@ -26,12 +26,15 @@ SNMPX reads its configuration from /etc/snmpx.conf. Below is an example configur
 ```webhook.default=https://hooks.slack.com/services/your-default-webhook
 webhook.critical=https://hooks.slack.com/services/your-critical-webhook
 webhook.warning=https://hooks.slack.com/services/your-warning-webhook
-webhook.info=https://hooks.slack.com/services/your-info-webhook```
+webhook.info=https://hooks.slack.com/services/your-info-webhook
+```
 
 ### SNMP Community String
+```
 community=publicx
 webhook.default: Used if no severity is specified in the SNMP trap.
 webhook.critical: Webhook for critical severity traps.
 webhook.warning: Webhook for warning severity traps.
 webhook.info: Webhook for info severity traps.
 community: SNMP community string for authentication.
+```
