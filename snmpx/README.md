@@ -1,6 +1,8 @@
 # SNMPX - SNMP Trap Listener with Slack Integration
+MySQL Enterprise Monitoring (MEM) only supported SNMP and email for event notifications. To fulfill the need for sending event notifications to Slack, the SNMPX application was developed.
+It processes SNMP traps and seamlessly forwards them to designated Slack channels.
 SNMPX is a lightweight and highly configurable SNMP trap listener that forwards SNMP traps to Slack channels. Designed to monitor SNMP traps in real-time,
- SNMPX supports SNMPv1 and SNMPv2c protocols, and processes severity levels such as critical, warning, info, and more.
+SNMPX supports SNMPv1 and SNMPv2c protocols, and processes severity levels such as critical, warning, info, and more.
 
 ## Features
 ### SNMP Trap Listener:
@@ -38,3 +40,6 @@ webhook.warning: Webhook for warning severity traps.
 webhook.info: Webhook for info severity traps.
 community: SNMP community string for authentication.
 ```
+
+
+
