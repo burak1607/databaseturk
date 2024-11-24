@@ -23,10 +23,10 @@ SNMPX is a lightweight and highly configurable SNMP trap listener that forwards 
 SNMPX reads its configuration from /etc/snmpx.conf. Below is an example configuration file:
 
 ### Slack Webhook URLs
-webhook.default=https://hooks.slack.com/services/your-default-webhook \n
-webhook.critical=https://hooks.slack.com/services/your-critical-webhook \n
-webhook.warning=https://hooks.slack.com/services/your-warning-webhook \n
-webhook.info=https://hooks.slack.com/services/your-info-webhook \n
+*webhook.default=https://hooks.slack.com/services/your-default-webhook
+*webhook.critical=https://hooks.slack.com/services/your-critical-webhook
+*webhook.warning=https://hooks.slack.com/services/your-warning-webhook
+*webhook.info=https://hooks.slack.com/services/your-info-webhook
 
 ### SNMP Community String
 community=publicx
